@@ -1,0 +1,38 @@
+version: "3"
+services: 
+  golang:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: "db"
+      DB_PORT: "3306"
+      DB_NAME: golang-docker-mysql
+      DB_USER: USER
+      DB_PASSWORD: PASSWORD
+    ports: 
+      - "8080:8080"
+    volumes: 
+      - ./:/go/src
+    tty: true
+  db:
+    image: mysql:8.2.0
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: golang-docker-mysql
+      MYSQL_USER: USER
+      MYSQL_PASSWORD: PASSWORD
+    volumes:
+        -  mysql-data:/var/lib/mysql
+        -  ./sql:/docker-entrypoint-initdb.d 
+volumes:
+  mysql-data:
