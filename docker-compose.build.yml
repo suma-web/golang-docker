@@ -1,0 +1,17 @@
+version: "3.4"
+services:
+    frontend:
+        build:
+            context: .
+            target: frontend_stage
+        image: frontend:latest
+    backend:
+        build:
+            context: .
+            target: backend_stage
+        image: backend:latest
+    final:
+        build:
+            context: .
+            target: final_stage
+        image: image:latest
