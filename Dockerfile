@@ -1,28 +1,27 @@
-FROM golang:1.26
+FROM golang:1.26 AS development
 
 WORKDIR /app
+
+RUN go install github.com/air-verse/air@latest
 
 COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
 
-RUN go build -o server .
 
-CMD ["./server"]
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/server .
 
+CMD ["air", "-c", ".air.toml"]
 
-FROM alpine:3.13
+FROM alpine:3.20 AS production
 
 WORKDIR /app
 
-COPY --from=builder /app/main .
+RUN apk add --no-cache ca-certificates tzdata
 
-COPY .env .
-COPY wait-for.sh .
-
-RUN chmod +x wait-for.sh
+COPY --from=development /app/server /app/server
 
 EXPOSE 8080
 
-CMD [ "/app/main" ]
+CMD ["/app/server"]
