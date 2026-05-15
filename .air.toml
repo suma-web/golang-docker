@@ -1,0 +1,12 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  bin = "./tmp/main"
+  cmd = "go build -o ./tmp/main ."
+  poll = true
+  poll_interval = 500
+  delay = 500
+  exclude_dir = ["tmp", "vendor", "mysql-data", "requests", "sql"]
+  exclude_regex = ["_test\\.go$"]
+  include_ext = ["go", "tpl", "tmpl", "html"]
