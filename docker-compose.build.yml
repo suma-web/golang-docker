@@ -1,0 +1,9 @@
+# 本番用イメージのみビルドするとき: docker compose -f docker-compose.build.yml build
+version: "3"
+services:
+  golang:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    image: golang-docker:production
